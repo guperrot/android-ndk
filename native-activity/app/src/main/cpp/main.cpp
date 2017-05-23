@@ -329,6 +329,9 @@ void android_main(struct android_app *state) {
     // Start MobileCenter
     jclass mobileCenter = FindClass("com/microsoft/azure/mobile/MobileCenter");
     jclass analytics = FindClass("com/microsoft/azure/mobile/analytics/Analytics");
+    jclass crashes = FindClass("com/microsoft/azure/mobile/crashes/Crashes");
+    jclass distribute = FindClass("com/microsoft/azure/mobile/distribute/Distribute");
+    jclass push = FindClass("com/microsoft/azure/mobile/push/Push");
 
     jmethodID setLogLevel = env->GetStaticMethodID(mobileCenter, "setLogLevel", "(I)V");
     env->CallStaticVoidMethod(mobileCenter, setLogLevel, 2);
@@ -336,7 +339,10 @@ void android_main(struct android_app *state) {
     jmethodID start = env->GetStaticMethodID(mobileCenter, "start",
                                              "(Landroid/app/Application;Ljava/lang/String;[Ljava/lang/Class;)V");
     jstring appSecret = env->NewStringUTF("45d1d9f6-2492-4e68-bd44-7190351eb5f3");
-    jobjectArray services = env->NewObjectArray(1, env->FindClass("java/lang/Class"), analytics);
+    jobjectArray services = env->NewObjectArray(4, env->FindClass("java/lang/Class"), analytics);
+    env->SetObjectArrayElement(services, 1, crashes);
+    env->SetObjectArrayElement(services, 2, distribute);
+    env->SetObjectArrayElement(services, 3, push);
     env->CallStaticVoidMethod(mobileCenter, start, application, appSecret, services);
 
     jmethodID trackEvent = env->GetStaticMethodID(analytics, "trackEvent", "(Ljava/lang/String;)V");
@@ -367,9 +373,9 @@ void android_main(struct android_app *state) {
                     ASensorEvent event;
                     while (ASensorEventQueue_getEvents(engine.sensorEventQueue,
                                                        &event, 1) > 0) {
-                        LOGI("accelerometer: x=%f y=%f z=%f",
-                             event.acceleration.x, event.acceleration.y,
-                             event.acceleration.z);
+//                        LOGI("accelerometer: x=%f y=%f z=%f",
+//                             event.acceleration.x, event.acceleration.y,
+//                             event.acceleration.z);
                     }
                 }
             }
